@@ -1,7 +1,9 @@
 from django.shortcuts import get_object_or_404, render
+from django.views.decorators.cache import cache_page
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from tasks.models import TodoItem, Category
+from datetime import datetime
 
 
 def index(request):
@@ -60,6 +62,9 @@ def tasks_by_cat(request, cat_slug=None):
         {"category": cat, "tasks": tasks, "categories": categories},
     )
 
+@cache_page(300)
+def cashed_time(request):
+    return render(request, "tasks/showtime.html", {"cashed_time":datetime.now})
 
 class TaskListView(ListView):
     model = TodoItem
